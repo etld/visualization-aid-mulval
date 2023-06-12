@@ -1,0 +1,49 @@
+digraph {
+	subgraph cluster_0 {
+		node [style=filled]
+		color=blue
+		label=internet
+		internet
+
+	}
+	subgraph cluster_1 {
+		node [style=filled]
+		color=blue
+		label=dmz
+		webServer
+
+	}
+	subgraph cluster_2 {
+		node [style=filled]
+		color=blue
+		label=internal1
+		fileServer
+		machine1
+		machine2
+
+	}
+	subgraph cluster_3 {
+		node [style=filled]
+		color=blue
+		label=internal2
+		machine3
+	}
+	machine2 -> machine3 [label="netAccess on tcp:80"]
+	"vulnD,httpd,remoteExploit,privEscalation" [color=red]
+	"vulnD,httpd,remoteExploit,privEscalation" -> machine3 [label=vulExists arrowhead=dot color=red]
+	machine1 -> machine2 [label="netAccess on tcp:80"]
+	"vulnC,httpd,remoteExploit,privEscalation" [color=red]
+	"vulnC,httpd,remoteExploit,privEscalation" -> machine2 [label=vulExists arrowhead=dot color=red]
+	webServer -> fileServer [label="netAccess on rpc:100005"]
+	"vulnA,mountd,remoteExploit,privEscalation" [color=red]
+	"vulnA,mountd,remoteExploit,privEscalation" -> fileServer [label=vulExists arrowhead=dot color=red]
+	internet -> webServer [label="netAccess on tcp:80"]
+	"vulnB,httpd,remoteExploit,privEscalation" [color=red]
+	"vulnB,httpd,remoteExploit,privEscalation" -> webServer [label=vulExists arrowhead=dot color=red]
+	fileServer -> machine1 [label="NFS Mounted (read)
+machine1:'/usr/local/share'
+fileServer:'/export'"]
+	webServer -> fileServer [label="NFS shell (write)
+webServer
+fileServer:'/export'"]
+}

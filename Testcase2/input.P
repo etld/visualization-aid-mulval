@@ -1,0 +1,32 @@
+attackerLocated(internet).
+attackGoal(execCode(machine3,_)).
+
+hacl(internet, webServer, tcp, 80).
+hacl(webServer, fileServer,  _, _).
+hacl(fileServer, webServer, _, _).
+hacl(fileServer, machine1, _, _).
+hacl(machine1, fileServer, _, _).
+hacl(machine1, machine2, _, _).
+hacl(machine2, machine3, _, _).
+
+/* configuration information of fileServer */
+networkServiceInfo(fileServer, mountd, rpc, 100005, root).
+nfsExportInfo(fileServer, '/export', _anyAccess, machine1).
+nfsExportInfo(fileServer, '/export', _anyAccess, webServer).
+vulExists(fileServer, vulnA, mountd).
+vulProperty(vulnA, remoteExploit, privEscalation).
+localFileProtection(fileServer, root, _, _).
+
+/* configuration information of webServer */
+vulExists(webServer, vulnB, httpd).
+vulProperty(vulnB, remoteExploit, privEscalation).
+networkServiceInfo(webServer, httpd, tcp, 80, apache).
+
+/* configuration information of machines */
+nfsMounted(machine1, '/usr/local/share', fileServer, '/export', read).
+networkServiceInfo(machine2, httpd, tcp, 80, apache).
+networkServiceInfo(machine3, httpd, tcp, 80, apache).
+vulExists(machine2, vulnC, httpd).
+vulProperty(vulnC, remoteExploit, privEscalation).
+vulExists(machine3, vulnD, httpd).
+vulProperty(vulnD, remoteExploit, privEscalation).
